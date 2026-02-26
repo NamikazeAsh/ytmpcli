@@ -70,7 +70,11 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
     if file_format == 'mp3':
         postprocessors = [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': quality}]
         if use_metadata:
-            postprocessors.extend([{'key': 'EmbedThumbnail'}, {'key': 'FFmpegMetadata', 'add_metadata': True}])
+            postprocessors.extend([
+                {'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'},
+                {'key': 'EmbedThumbnail'},
+                {'key': 'FFmpegMetadata', 'add_metadata': True}
+            ])
         ydl_opts.update({'format': 'bestaudio/best', 'postprocessors': postprocessors})
     else:
         f_str = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}][ext=mp4]/best'
@@ -78,7 +82,11 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         
         postprocessors = []
         if use_metadata:
-            postprocessors.extend([{'key': 'EmbedThumbnail'}, {'key': 'FFmpegMetadata', 'add_metadata': True}])
+            postprocessors.extend([
+                {'key': 'FFmpegThumbnailsConvertor', 'format': 'jpg'},
+                {'key': 'EmbedThumbnail'},
+                {'key': 'FFmpegMetadata', 'add_metadata': True}
+            ])
         ydl_opts.update({'format': f_str, 'postprocessors': postprocessors})
 
     if is_playlist:
