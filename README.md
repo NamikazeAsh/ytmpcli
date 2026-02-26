@@ -42,5 +42,10 @@ ytmpcli
 - `ytmpcli/downloader.py` : Download engine.
 - `setup.py` : Entry point configuration.
 
+## Screenshots
+<img width="514" height="170" alt="image" src="https://github.com/user-attachments/assets/bd6b9049-6928-4638-9a56-503cbd87144d" />
+<img width="624" height="396" alt="image" src="https://github.com/user-attachments/assets/b895f466-35d1-4859-82d2-c5296f45b41b" />
+
+
 ---
 Created by **NamikazeAsh**
