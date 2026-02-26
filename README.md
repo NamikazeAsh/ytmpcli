@@ -2,19 +2,18 @@
 
 > Minimalist YT downloader. Built for personal use, now public.
 
-Organizes playlists into folders, embeds cover art, and handles MP3/MP4 on the fly. Fast, clean, and zero fluff.
+Organizes playlists into folders and handles MP3/MP4 on the fly. Fast, clean, and zero fluff.
 
 ## Features
 - **Interactive Loop**: Paste links back-to-back without restarting.
 - **Auto-Playlist**: Automatically creates folders for playlists.
 - **Global Saving**: All downloads centralize in `Downloads/ytmpcli`.
 - **Dynamic Quality**: Toggle bitrates (128k-320k) and resolution (480p-1080p) on the fly.
-- **Auto-Tagging**: Automatically embeds high-res cover art and metadata tags (Toggleable).
 - **No Duplicates**: Skips existing files instantly.
 
 ## Installation
 
-1. **Ensure FFmpeg is installed** (Required for metadata and MP3 extraction).
+1. **Ensure FFmpeg is installed** (Required for MP3 extraction).
 2. **Setup**:
    ```bash
    git clone https://github.com/NamikazeAsh/ytmpcli.git
@@ -34,7 +33,6 @@ ytmpcli
 - `mp4` / `mp3` : Toggle between video and audio mode.
 - `bitrate` : Change MP3 quality (128k - 320k).
 - `res` : Change MP4 resolution (480p - 1080p).
-- `-m` : Toggle metadata and cover art on/off.
 - `q` : Exit.
 
 ## Structure
