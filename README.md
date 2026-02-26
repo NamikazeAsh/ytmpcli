@@ -31,6 +31,9 @@ ytmpcli
 
 ### In-App Commands
 - `[link]` : Paste any YT link to start.
+- `s:<query>` : Search and download the top result.
+- `open` : Open the downloads folder.
+- `?` : Show a quick help menu.
 - `[.txt]` : Load a text file for bulk downloads.
 - `mp4` / `mp3` : Toggle between video and audio mode.
 - `bitrate` : Change MP3 quality (128k - 320k).

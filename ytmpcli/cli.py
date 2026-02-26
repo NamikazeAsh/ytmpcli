@@ -20,7 +20,7 @@ def interactive_mode():
     """
     print(header)
     print(f"  ready  » {target}")
-    print(f"  inputs » [link], [.txt], [mp3/mp4], [bitrate/res], or [q]uit")
+    print(f"  inputs » [link], [s:<query>], [?], or [q]uit")
     print("  " + "─" * 55)
 
     while True:
@@ -32,6 +32,30 @@ def interactive_mode():
             if not url: continue
             if url.lower() in ['exit', 'quit', 'q']: break
             
+            if url == '?':
+                print("\n  [ commands ]")
+                print("  mp3, mp4     : switch format")
+                print("  bitrate, res : change quality")
+                print("  s:<query>     : search & download top result")
+                print("  open         : open downloads folder")
+                print("  <name>.txt   : bulk download from file")
+                print("  q            : exit")
+                continue
+
+            if url.lower() == 'open':
+                if not os.path.exists(target): os.makedirs(target)
+                os.startfile(target)
+                print("  opening folder...")
+                continue
+
+            if url.lower().startswith('s:'):
+                query = url[2:].strip()
+                if not query: continue
+                print(f"  searching: {query}")
+                search_url = f"ytsearch1:{query}"
+                smart_download(search_url, file_format=fmt, quality=q_mp3 if fmt == "mp3" else q_mp4)
+                continue
+
             if url.lower() == 'mp3':
                 fmt = "mp3"
                 print(f"  switched to {fmt}")
