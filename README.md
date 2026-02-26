@@ -9,7 +9,7 @@ Organizes playlists into folders, embeds cover art, and handles MP3/MP4 on the f
 - **Auto-Playlist**: Automatically creates folders for playlists.
 - **Global Saving**: All downloads centralize in `Downloads/ytmpcli`.
 - **Dynamic Quality**: Toggle bitrates (128k-320k) and resolution (480p-1080p) on the fly.
-- **Auto-Tagging**: Automatically embeds high-res cover art and metadata tags.
+- **Auto-Tagging**: Automatically embeds high-res cover art and metadata tags (Toggleable).
 - **No Duplicates**: Skips existing files instantly.
 
 ## Installation
@@ -34,6 +34,7 @@ ytmpcli
 - `mp4` / `mp3` : Toggle between video and audio mode.
 - `bitrate` : Change MP3 quality (128k - 320k).
 - `res` : Change MP4 resolution (480p - 1080p).
+- `-m` : Toggle metadata and cover art on/off.
 - `q` : Exit.
 
 ## Structure

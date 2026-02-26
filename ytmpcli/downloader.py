@@ -47,7 +47,7 @@ def progress_hook(d):
         else:
              print(f"\r  {bar} 100% ✓")
 
-def download_media(url, is_playlist=False, file_format='mp3', quality='192', output_path=None):
+def download_media(url, is_playlist=False, file_format='mp3', quality='192', output_path=None, use_metadata=True):
     if output_path is None:
         home = os.path.expanduser("~")
         output_path = os.path.join(home, "Downloads", "ytmpcli")
@@ -63,30 +63,22 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         'logger': MyLogger(),
         'progress_hooks': [progress_hook],
         'nooverwrites': True,
-        'writethumbnail': True,
+        'writethumbnail': use_metadata,
     }
 
     if file_format == 'mp3':
-        ydl_opts.update({
-            'format': 'bestaudio/best',
-            'postprocessors': [
-                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': quality},
-                {'key': 'EmbedThumbnail'},
-                {'key': 'FFmpegMetadata', 'add_metadata': True},
-            ],
-        })
+        postprocessors = [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': quality}]
+        if use_metadata:
+            postprocessors.extend([{'key': 'EmbedThumbnail'}, {'key': 'FFmpegMetadata', 'add_metadata': True}])
+        ydl_opts.update({'format': 'bestaudio/best', 'postprocessors': postprocessors})
     else:
         f_str = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}][ext=mp4]/best'
-        if quality == 'best':
-            f_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
-            
-        ydl_opts.update({
-            'format': f_str,
-            'postprocessors': [
-                {'key': 'EmbedThumbnail'},
-                {'key': 'FFmpegMetadata', 'add_metadata': True},
-            ],
-        })
+        if quality == 'best': f_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+        
+        postprocessors = []
+        if use_metadata:
+            postprocessors.extend([{'key': 'EmbedThumbnail'}, {'key': 'FFmpegMetadata', 'add_metadata': True}])
+        ydl_opts.update({'format': f_str, 'postprocessors': postprocessors})
 
     if is_playlist:
         ydl_opts['outtmpl'] = os.path.join(output_path, '%(playlist_title)s', '%(title)s.%(ext)s')
@@ -111,6 +103,6 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         elif "video is unavailable" in err_msg.lower(): print(f"  ✗ error » video unavailable")
         else: print(f"  ✗ error » download failed")
 
-def smart_download(url, file_format='mp3', quality='192'):
+def smart_download(url, file_format='mp3', quality='192', use_metadata=True):
     is_playlist = "list=" in url
-    download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality)
+    download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality, use_metadata=use_metadata)

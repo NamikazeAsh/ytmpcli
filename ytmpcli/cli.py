@@ -11,6 +11,7 @@ def interactive_mode():
     fmt = "mp3"
     q_mp3 = "192"
     q_mp4 = "1080"
+    meta = True
     
     header = """
     █▄█ ▀█▀ █▀▄▀█ █▀█ █▀▀ █   █
@@ -20,17 +21,23 @@ def interactive_mode():
     """
     print(header)
     print(f"  ready  » {target}")
-    print(f"  inputs » [link], [mp3/mp4], [bitrate/res], or [q]uit")
+    print(f"  inputs » [link], [mp3/mp4], [bitrate/res], [-m], or [q]uit")
     print("  " + "─" * 55)
 
     while True:
         try:
             curr_q = q_mp3 if fmt == "mp3" else q_mp4
-            prompt = f"\n  link ({fmt}:{curr_q}) > "
+            m_tag = "" if meta else ":raw"
+            prompt = f"\n  link ({fmt}:{curr_q}{m_tag}) > "
             url = input(prompt).strip()
             
             if not url: continue
             if url.lower() in ['exit', 'quit', 'q']: break
+            
+            if url.lower() == '-m':
+                meta = not meta
+                print(f"  metadata {'on' if meta else 'off'}")
+                continue
             
             if url.lower() == 'mp3':
                 fmt = "mp3"
@@ -59,7 +66,7 @@ def interactive_mode():
                     print(f"  res set to {q_mp4}p")
                 continue
             
-            smart_download(url, file_format=fmt, quality=q_mp3 if fmt == "mp3" else q_mp4)
+            smart_download(url, file_format=fmt, quality=q_mp3 if fmt == "mp3" else q_mp4, use_metadata=meta)
             print("") 
         except KeyboardInterrupt:
             print("\nbye.")
