@@ -64,6 +64,7 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         'progress_hooks': [progress_hook],
         'nooverwrites': True,
         'writethumbnail': use_metadata,
+        'restrictfilenames': True,
     }
 
     if file_format == 'mp3':
