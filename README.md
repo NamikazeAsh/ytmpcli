@@ -7,6 +7,7 @@ Organizes playlists into folders and handles MP3/MP4 on the fly. Fast, clean, an
 ## Features
 - **Interactive Loop**: Paste links back-to-back without restarting.
 - **Auto-Playlist**: Automatically creates folders for playlists.
+- **Bulk Downloads**: Feed it a `.txt` file with one link per line.
 - **Global Saving**: All downloads centralize in `Downloads/ytmpcli`.
 - **Dynamic Quality**: Toggle bitrates (128k-320k) and resolution (480p-1080p) on the fly.
 - **No Duplicates**: Skips existing files instantly.
@@ -30,6 +31,7 @@ ytmpcli
 
 ### In-App Commands
 - `[link]` : Paste any YT link to start.
+- `[.txt]` : Load a text file for bulk downloads.
 - `mp4` / `mp3` : Toggle between video and audio mode.
 - `bitrate` : Change MP3 quality (128k - 320k).
 - `res` : Change MP4 resolution (480p - 1080p).

@@ -20,8 +20,8 @@ def interactive_mode():
     """
     print(header)
     print(f"  ready  » {target}")
-    print(f"  inputs » [link], [mp3/mp4], [bitrate/res], or [q]uit")
-    print("  " + "─" * 45)
+    print(f"  inputs » [link], [.txt], [mp3/mp4], [bitrate/res], or [q]uit")
+    print("  " + "─" * 55)
 
     while True:
         try:
@@ -57,6 +57,18 @@ def interactive_mode():
                 if sel in opts:
                     q_mp4 = opts[sel]
                     print(f"  res set to {q_mp4}p")
+                continue
+            
+            if url.lower().endswith('.txt'):
+                if os.path.exists(url):
+                    with open(url, 'r') as f:
+                        links = [line.strip() for line in f if line.strip()]
+                    print(f"  found {len(links)} links in {url}")
+                    for i, link in enumerate(links):
+                        print(f"  item {i+1}/{len(links)}")
+                        smart_download(link, file_format=fmt, quality=q_mp3 if fmt == "mp3" else q_mp4)
+                else:
+                    print(f"  ✗ error » file not found")
                 continue
             
             smart_download(url, file_format=fmt, quality=q_mp3 if fmt == "mp3" else q_mp4)
