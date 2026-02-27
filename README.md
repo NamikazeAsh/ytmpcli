@@ -1,20 +1,20 @@
 # ytmpcli
 
-> Minimalist YT downloader. Built for personal use, now public.
+Minimalist YT downloader. Built for personal use.
 
-Organizes playlists into folders and handles MP3/MP4 on the fly. Fast, clean, and zero fluff.
+Extracts native audio (M4A) and video (MP4). Fast, clean, no fluff.
 
 ## Features
-- **Interactive Loop**: Paste links back-to-back without restarting.
-- **Auto-Playlist**: Automatically creates folders for playlists.
-- **Bulk Downloads**: Feed it a `.txt` file with one link per line.
-- **Global Saving**: All downloads centralize in `Downloads/ytmpcli`.
-- **Dynamic Quality**: Toggle bitrates (128k-320k) and resolution (480p-1080p) on the fly.
-- **No Duplicates**: Skips existing files instantly.
+
+- **Interactive**: Paste links in a loop.
+- **Auto-Sort**: Playlists automatically go into folders.
+- **Bulk**: Feed it a `.txt` file with one link per line.
+- **Native Quality**: Grabs the best source (M4A).
+- **Global**: All downloads go to `Downloads/ytmpcli`.
 
 ## Installation
 
-1. **Ensure FFmpeg is installed** (Required for MP3 extraction).
+1. **FFmpeg**: Required for media processing. Download and add to PATH.
 2. **Setup**:
    ```bash
    git clone https://github.com/NamikazeAsh/ytmpcli.git
@@ -24,31 +24,20 @@ Organizes playlists into folders and handles MP3/MP4 on the fly. Fast, clean, an
 
 ## Usage
 
-Run the tool from any terminal:
-```bash
-ytmpcli
-```
+Run `ytmpcli`.
 
-### In-App Commands
-- `[link]` : Paste any YT link to start.
-- `s:<query>` : Search and download the top result.
-- `open` : Open the downloads folder.
-- `?` : Show a quick help menu.
-- `[.txt]` : Load a text file for bulk downloads.
-- `mp4` / `mp3` : Toggle between video and audio mode.
-- `bitrate` : Change MP3 quality (128k - 320k).
-- `res` : Change MP4 resolution (480p - 1080p).
+### Commands
+
+- `[link]` : Paste any YT link.
+- `s:<query>` : Search & download top result.
+- `audio` / `video` : Toggle mode.
+- `res` : Change video res.
+- `open` : Open the folder.
+- `?` : Help menu.
 - `q` : Exit.
 
-## Structure
-- `ytmpcli/cli.py` : CLI & interactive logic.
-- `ytmpcli/downloader.py` : Download engine.
-- `setup.py` : Entry point configuration.
-
-## Screenshots
-<img width="514" height="170" alt="image" src="https://github.com/user-attachments/assets/bd6b9049-6928-4638-9a56-503cbd87144d" />
-<img width="624" height="396" alt="image" src="https://github.com/user-attachments/assets/b895f466-35d1-4859-82d2-c5296f45b41b" />
-
-
 ---
+
+Uses **yt-dlp**. Built for a faster workflow when building local collections (like mine!).
+
 Created by **NamikazeAsh**

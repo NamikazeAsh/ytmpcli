@@ -47,7 +47,7 @@ def progress_hook(d):
         else:
              print(f"\r  {bar} 100% ✓")
 
-def download_media(url, is_playlist=False, file_format='mp3', quality='192', output_path=None):
+def download_media(url, is_playlist=False, file_format='audio', quality='best', output_path=None):
     if output_path is None:
         home = os.path.expanduser("~")
         output_path = os.path.join(home, "Downloads", "ytmpcli")
@@ -66,12 +66,17 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         'restrictfilenames': True,
     }
 
-    if file_format == 'mp3':
+    if file_format == 'audio':
+        # Best native audio stream (usually m4a or opus)
         ydl_opts.update({
-            'format': 'bestaudio/best',
-            'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': quality}],
+            'format': 'bestaudio[ext=m4a]/bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'm4a', # Ensures high compatibility
+            }],
         })
     else:
+        # Best native MP4 video
         f_str = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}][ext=mp4]/best'
         if quality == 'best': f_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
         ydl_opts.update({'format': f_str})
@@ -99,6 +104,6 @@ def download_media(url, is_playlist=False, file_format='mp3', quality='192', out
         elif "video is unavailable" in err_msg.lower(): print(f"  ✗ error » video unavailable")
         else: print(f"  ✗ error » download failed")
 
-def smart_download(url, file_format='mp3', quality='192'):
+def smart_download(url, file_format='audio', quality='best'):
     is_playlist = "list=" in url
     download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality)
