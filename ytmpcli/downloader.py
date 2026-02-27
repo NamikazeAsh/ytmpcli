@@ -67,16 +67,10 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
     }
 
     if file_format == 'audio':
-        # Best native audio stream (usually m4a or opus)
         ydl_opts.update({
-            'format': 'bestaudio[ext=m4a]/bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'm4a', # Ensures high compatibility
-            }],
+            'format': 'bestaudio/best',
         })
     else:
-        # Best native MP4 video
         f_str = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}][ext=mp4]/best'
         if quality == 'best': f_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
         ydl_opts.update({'format': f_str})
