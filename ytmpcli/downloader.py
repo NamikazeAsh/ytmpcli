@@ -46,6 +46,8 @@ def progress_hook(d):
              print(f"\r  {bar} 100% (exists) ✓")
         else:
              print(f"\r  {bar} 100% ✓")
+        if hasattr(progress_hook, 'downloaded_files'):
+            progress_hook.downloaded_files.append(d['filename'])
 
 def download_media(url, is_playlist=False, file_format='audio', quality='best', output_path=None):
     if output_path is None:
@@ -54,6 +56,8 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+
+    progress_hook.downloaded_files = []
 
     ydl_opts = {
         'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
@@ -64,11 +68,12 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
         'progress_hooks': [progress_hook],
         'nooverwrites': True,
         'restrictfilenames': True,
+        'fixup': 'never',
     }
 
     if file_format == 'audio':
         ydl_opts.update({
-            'format': 'bestaudio/best',
+            'format': 'bestaudio[ext=m4a]/bestaudio/best',
         })
     else:
         f_str = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}][ext=mp4]/best'
@@ -82,7 +87,7 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             if "/@" in url or "/channel/" in url or "/c/" in url:
                 print(f"  ✗ error » channels not supported")
-                return
+                return []
             info = ydl.extract_info(url, download=False, process=False)
             title = info.get('title', 'Unknown')
             if info.get('_type') == 'playlist' or 'entries' in info:
@@ -97,7 +102,10 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
         if "Unsupported URL" in err_msg: print(f"  ✗ error » unsupported link")
         elif "video is unavailable" in err_msg.lower(): print(f"  ✗ error » video unavailable")
         else: print(f"  ✗ error » download failed")
+        return []
+
+    return list(progress_hook.downloaded_files)
 
 def smart_download(url, file_format='audio', quality='best'):
     is_playlist = "list=" in url
-    download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality)
+    return download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality)

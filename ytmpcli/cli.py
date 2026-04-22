@@ -3,6 +3,18 @@ import sys
 from .downloader import download_media, smart_download
 import os
 
+def _rename_file(filepath):
+    new_name = input("  name > ").strip()
+    if not new_name:
+        return
+    ext = os.path.splitext(filepath)[1]
+    new_path = os.path.join(os.path.dirname(filepath), new_name + ext)
+    try:
+        os.rename(filepath, new_path)
+        print(f"  saved as » {new_name}{ext}")
+    except Exception:
+        print(f"  ✗ error » rename failed")
+
 def interactive_mode():
     os.system('cls' if os.name == 'nt' else 'clear')
     home = os.path.expanduser("~")
@@ -10,6 +22,7 @@ def interactive_mode():
     
     fmt = "audio"
     q_video = "1080"
+    rename = False
     
     header = """
     █▄█ ▀█▀ █▀▄▀█ █▀█ █▀▀ █   █
@@ -25,7 +38,8 @@ def interactive_mode():
     while True:
         try:
             curr_mode = "audio" if fmt == "audio" else f"video:{q_video}p"
-            prompt = f"\n  link ({curr_mode}) > "
+            rename_tag = " +rename" if rename else ""
+            prompt = f"\n  link ({curr_mode}{rename_tag}) > "
             url = input(prompt).strip()
             
             if not url: continue
@@ -35,6 +49,7 @@ def interactive_mode():
                 print("\n  [ commands ]")
                 print("  audio, video : switch mode")
                 print("  res          : change video res")
+                print("  rename       : toggle custom filename prompt")
                 print("  s:<query>    : search & download top result")
                 print("  open         : open downloads folder")
                 print("  <name>.txt   : bulk download from file")
@@ -52,7 +67,14 @@ def interactive_mode():
                 if not query: continue
                 print(f"  searching: {query}")
                 search_url = f"ytsearch1:{query}"
-                smart_download(search_url, file_format=fmt, quality='best' if fmt == "audio" else q_video)
+                files = smart_download(search_url, file_format=fmt, quality='best' if fmt == "audio" else q_video)
+                if rename and len(files) == 1:
+                    _rename_file(files[0])
+                continue
+
+            if url.lower() == 'rename':
+                rename = not rename
+                print(f"  rename {'on' if rename else 'off'}")
                 continue
 
             if url.lower() == 'audio':
@@ -85,8 +107,10 @@ def interactive_mode():
                     print(f"  ✗ error » file not found")
                 continue
             
-            smart_download(url, file_format=fmt, quality='best' if fmt == "audio" else q_video)
-            print("") 
+            files = smart_download(url, file_format=fmt, quality='best' if fmt == "audio" else q_video)
+            if rename and len(files) == 1:
+                _rename_file(files[0])
+            print("")
         except KeyboardInterrupt:
             print("\nbye.")
             break
