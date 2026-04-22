@@ -10,6 +10,7 @@ Extracts native audio (M4A) and video (MP4). Fast, clean, no fluff.
 - **Auto-Sort**: Playlists automatically go into folders.
 - **Bulk**: Feed it a `.txt` file with one link per line.
 - **Native Quality**: Grabs the best source (M4A).
+- **Rename**: Optionally set a custom filename after each download.
 - **Global**: All downloads go to `Downloads/ytmpcli`.
 
 ## Installation
@@ -32,6 +33,7 @@ Run `ytmpcli`.
 - `s:<query>` : Search & download top result.
 - `audio` / `video` : Toggle mode.
 - `res` : Change video res.
+- `rename` : Toggle custom filename prompt after download.
 - `open` : Open the folder.
 - `?` : Help menu.
 - `q` : Exit.
