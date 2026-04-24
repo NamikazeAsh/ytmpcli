@@ -109,3 +109,22 @@ def download_media(url, is_playlist=False, file_format='audio', quality='best', 
 def smart_download(url, file_format='audio', quality='best'):
     is_playlist = "list=" in url
     return download_media(url, is_playlist=is_playlist, file_format=file_format, quality=quality)
+
+def fetch_search_results(query, n=3):
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'logger': MyLogger(),
+        'extract_flat': True,
+        'noplaylist': False,
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(f"ytsearch{n}:{query}", download=False)
+        return [
+            {
+                'id': e.get('id'),
+                'title': e.get('title', 'Unknown'),
+                'duration': e.get('duration'),
+            }
+            for e in info.get('entries', [])
+        ]

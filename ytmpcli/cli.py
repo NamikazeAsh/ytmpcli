@@ -1,7 +1,48 @@
 import argparse
 import sys
-from .downloader import download_media, smart_download
+import re
+from .downloader import download_media, smart_download, fetch_search_results
 import os
+
+def _do_update():
+    import urllib.request, json, subprocess
+    try:
+        print("  checking for updates...")
+        req = urllib.request.Request(
+            "https://api.github.com/repos/NamikazeAsh/ytmpcli/tags",
+            headers={"Accept": "application/vnd.github+json"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as r:
+            tags = json.loads(r.read())
+        if not tags:
+            print("  ✗ no releases found")
+            return
+        latest = tags[0]['name'].lstrip('v')
+        from ytmpcli import __version__ as current
+        print(f"  current: {current}  →  latest: {latest}")
+        if latest == current:
+            print("  already up to date ✓")
+            return
+        if getattr(sys, 'frozen', False):
+            print("  download the new version at:")
+            print("  github.com/NamikazeAsh/ytmpcli/releases/latest")
+        else:
+            print("  updating...")
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", "--upgrade",
+                 "git+https://github.com/NamikazeAsh/ytmpcli.git"],
+                check=True, capture_output=True
+            )
+            print("  done ✓  restart ytmpcli to use the new version")
+    except Exception as e:
+        print(f"  ✗ update failed: {e}")
+
+def _format_duration(seconds):
+    if not seconds:
+        return '?:??'
+    m, s = divmod(int(seconds), 60)
+    h, m = divmod(m, 60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
 
 def _rename_file(filepath):
     new_name = input("  name > ").strip()
@@ -51,9 +92,16 @@ def interactive_mode():
                 print("  res          : change video res")
                 print("  rename       : toggle custom filename prompt")
                 print("  s:<query>    : search & download top result")
+                print("  s3:<query>   : search & pick from 3 results")
+                print("  s5:<query>   : search & pick from 5 results")
+                print("  update       : check for updates and upgrade")
                 print("  open         : open downloads folder")
                 print("  <name>.txt   : bulk download from file")
                 print("  q            : exit")
+                continue
+
+            if url.lower() == 'update':
+                _do_update()
                 continue
 
             if url.lower() == 'open':
@@ -62,12 +110,29 @@ def interactive_mode():
                 print("  opening folder...")
                 continue
 
-            if url.lower().startswith('s:'):
-                query = url[2:].strip()
+            m = re.match(r'^s(\d*):', url, re.IGNORECASE)
+            if m:
+                count = int(m.group(1)) if m.group(1) else 1
+                query = url[m.end():].strip()
                 if not query: continue
                 print(f"  searching: {query}")
-                search_url = f"ytsearch1:{query}"
-                files = smart_download(search_url, file_format=fmt, quality='best' if fmt == "audio" else q_video)
+                if count <= 1:
+                    files = smart_download(f"ytsearch1:{query}", file_format=fmt,
+                                           quality='best' if fmt == "audio" else q_video)
+                else:
+                    results = fetch_search_results(query, count)
+                    if not results:
+                        print("  ✗ no results")
+                        continue
+                    for i, r in enumerate(results, 1):
+                        t = (r['title'][:50] + '..') if len(r['title']) > 50 else r['title']
+                        print(f"  {i}. {t} [{_format_duration(r['duration'])}]")
+                    sel = input(f"  pick [1-{len(results)}] or enter to cancel > ").strip()
+                    if not sel or not sel.isdigit() or not (1 <= int(sel) <= len(results)):
+                        continue
+                    chosen = results[int(sel) - 1]
+                    files = smart_download(f"https://www.youtube.com/watch?v={chosen['id']}",
+                                           file_format=fmt, quality='best' if fmt == "audio" else q_video)
                 if rename and len(files) == 1:
                     _rename_file(files[0])
                 continue
