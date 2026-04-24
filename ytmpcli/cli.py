@@ -65,11 +65,12 @@ def interactive_mode():
     q_video = "1080"
     rename = False
     
-    header = """
+    from ytmpcli import __version__
+    header = f"""
     █▄█ ▀█▀ █▀▄▀█ █▀█ █▀▀ █   █
     ░█░ ░█░ █░▀░█ █▀▀ █▄▄ █▄▄ █
     
-    by NamikazeAsh
+    by NamikazeAsh - v{__version__}
     """
     print(header)
     print(f"  ready  » {target}")
