@@ -56,6 +56,25 @@ def _rename_file(filepath):
     except Exception:
         print(f"  ✗ error » rename failed")
 
+def _check_update_notify(current):
+    def _check():
+        try:
+            import urllib.request, json
+            req = urllib.request.Request(
+                "https://api.github.com/repos/NamikazeAsh/ytmpcli/tags",
+                headers={"Accept": "application/vnd.github+json"}
+            )
+            with urllib.request.urlopen(req, timeout=5) as r:
+                tags = json.loads(r.read())
+            if tags:
+                latest = tags[0]["name"].lstrip("v")
+                if latest != current:
+                    print(f"  update available: v{latest}  ->  type [update] to upgrade")
+        except Exception:
+            pass
+    import threading
+    threading.Thread(target=_check, daemon=True).start()
+
 def interactive_mode():
     os.system('cls' if os.name == 'nt' else 'clear')
     home = os.path.expanduser("~")
@@ -76,6 +95,7 @@ def interactive_mode():
     print(f"  ready  » {target}")
     print(f"  inputs » [link], [audio/video], [res], [?], or [q]uit")
     print("  " + "─" * 55)
+    _check_update_notify(__version__)
 
     while True:
         try:
