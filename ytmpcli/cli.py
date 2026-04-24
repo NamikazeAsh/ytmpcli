@@ -17,10 +17,13 @@ def _do_update():
         if not tags:
             print("  ✗ no releases found")
             return
-        latest = tags[0]['name'].lstrip('v')
+        def _ver(v):
+            try: return tuple(int(x) for x in v.lstrip('v').split('.'))
+            except: return (0,)
+        latest = max(tags, key=lambda t: _ver(t['name']))['name'].lstrip('v')
         from ytmpcli import __version__ as current
         print(f"  current: {current}  →  latest: {latest}")
-        if latest == current:
+        if _ver(latest) <= _ver(current):
             print("  already up to date ✓")
             return
         if getattr(sys, 'frozen', False):
@@ -67,8 +70,11 @@ def _check_update_notify(current):
             with urllib.request.urlopen(req, timeout=5) as r:
                 tags = json.loads(r.read())
             if tags:
-                latest = tags[0]["name"].lstrip("v")
-                if latest != current:
+                def _ver(v):
+                    try: return tuple(int(x) for x in v.lstrip("v").split("."))
+                    except: return (0,)
+                latest = max(tags, key=lambda t: _ver(t["name"]))["name"].lstrip("v")
+                if _ver(latest) > _ver(current):
                     print(f"  update available: v{latest}  ->  type [update] to upgrade")
         except Exception:
             pass
@@ -147,7 +153,8 @@ def interactive_mode():
                         continue
                     for i, r in enumerate(results, 1):
                         t = (r['title'][:50] + '..') if len(r['title']) > 50 else r['title']
-                        print(f"  {i}. {t} [{_format_duration(r['duration'])}]")
+                        ch = (r['uploader'][:20] + '..') if len(r['uploader']) > 20 else r['uploader']
+                        print(f"  {i}. {t} [{_format_duration(r['duration'])} | {ch}]")
                     sel = input(f"  pick [1-{len(results)}] or enter to cancel > ").strip()
                     if not sel or not sel.isdigit() or not (1 <= int(sel) <= len(results)):
                         continue

@@ -125,6 +125,7 @@ def fetch_search_results(query, n=3):
                 'id': e.get('id'),
                 'title': e.get('title', 'Unknown'),
                 'duration': e.get('duration'),
+                'uploader': e.get('uploader') or e.get('channel') or '?',
             }
             for e in info.get('entries', [])
         ]
