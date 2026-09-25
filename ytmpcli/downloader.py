@@ -12,6 +12,8 @@ class MyLogger:
     def warning(self, msg):
         pass
     def error(self, msg):
+        if "Deprecated Feature" in msg and "Python" in msg:
+            return
         print(f"Error: {msg}")
 
 def progress_hook(d):
